@@ -23,8 +23,77 @@ void pause(){
   menu();
 }
 
+void criaInimigo(){
+  // Criando os jogadores inimigos
+  char possiveisNomes[50][255] = {
+    " ",
+    "Mago Mutante",
+    "Gatinho Fofo",
+    "SPP",
+    "Troll de Gelo",
+    "Feiticeira Sombria",
+    "Goblim",
+    "Caçador de bruxos",
+    "Arqueiro",
+    "Fantasma",
+    "Coração cremoso",
+    "Eu sou seu pai",
+    "Prova de algoritmo",
+    "Hu3Hu3",
+    "Cavaleiro solitário",
+    "The little boss",
+    "Oi sumida rs",
+    "Café com leite",
+    "Mercado de trabalho",
+    "Essa barra que é gostar de você",
+    "ENEM",
+    "Máscara",
+    "Gurú do Himalaia",
+    "Java",
+    "Usuário Final",
+    "Bug Escondido",
+    "Scooby Doo",
+    "Ben 10",
+    "Tundercats",
+    "Goku",
+    "Vegeta",
+    "Bills",
+    "Jiren",
+    "Whis",
+    "Zen oh",
+    "Yugi",
+    "Tio do jackie chan",
+    "Talismã do dragão",
+    "Megazord",
+    "Shenlong",
+    "Thanos",
+    "Peter do DeadPool",
+    "Logan",
+    "Homer",
+    "Bart",
+    "Lisa",
+    "Marge",
+    "Lindinha",
+    "Florzinha",
+    "Docinho"
+  }; 
+  
+  for(int i = 1; i < 50; ++i){
+    jogador[i].vida = 100;
+    jogador[i].especial = 50;
+    jogador[i].ataque = (rand()%29) + 1;
+    jogador[i].defesa = (rand()%19) + 1;
+    strcpy(jogador[i].nome, possiveisNomes[i]);
+  }
+}
+
 // Função que cria o personagem que vai ser controlado pelo usuário
 void criarPersonagem(){
+  // Verificação para criar os inimigos
+  if(jogador[1].vida != 100){
+    criaInimigo();
+  }
+
   if(jogador[0].vida == 100){
     printf("Você já criou seu personagem. Comece o jogo\n");
     pause();
@@ -75,67 +144,7 @@ void criarPersonagem(){
 void exibirPersonagens(){
   // Verificação para saber se existe os outro jogadores
   if(jogador[1].vida != 100){
-    // Criando os jogadores inimigos
-    char possiveisNomes[50][255] = {
-      " ",
-      "Mago Mutante",
-      "Gatinho Fofo",
-      "SPP",
-      "Troll de Gelo",
-      "Feiticeira Sombria",
-      "Goblim",
-      "Caçador de bruxos",
-      "Arqueiro",
-      "Fantasma",
-      "Coração cremoso",
-      "Eu sou seu pai",
-      "Prova de algoritmo",
-      "Hu3Hu3",
-      "Cavaleiro solitário",
-      "The little boss",
-      "Oi sumida rs",
-      "Café com leite",
-      "Mercado de trabalho",
-      "Essa barra que é gostar de você",
-      "ENEM",
-      "Máscara",
-      "Gurú do Himalaia",
-      "Java",
-      "Usuário Final",
-      "Bug Escondido",
-      "Scooby Doo",
-      "Ben 10",
-      "Tundercats",
-      "Goku",
-      "Vegeta",
-      "Bills",
-      "Jiren",
-      "Whis",
-      "Zen oh",
-      "Yugi",
-      "Tio do jackie chan",
-      "Talismã do dragão",
-      "Megazord",
-      "Shenlong",
-      "Thanos",
-      "Peter do DeadPool",
-      "Logan",
-      "Homer",
-      "Bart",
-      "Lisa",
-      "Marge",
-      "Lindinha",
-      "Florzinha",
-      "Docinho"
-    }; 
-    
-    for(int i = 1; i < 50; ++i){
-      jogador[i].vida = 100;
-      jogador[i].especial = 50;
-      jogador[i].ataque = (rand()%29) + 1;
-      jogador[i].defesa = (rand()%19) + 1;
-      strcpy(jogador[i].nome, possiveisNomes[i]);
-    }
+    criaInimigo();
   }
   if(jogador[0].vida == 100){
     printf("+-----------Jogadores------------+\n");
