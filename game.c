@@ -1,52 +1,82 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Declarando a estrutura para o tipo personagem de forma global
+struct personagem{
+  char nome[255];
+  int vida;
+  int ataque;
+  int especial;
+  int defesa;
+};
+struct personagem jogador[50];
+
+void pause(){
+  printf("Aperte enter para continuar...\n");
+  char buffer[80];
+  fgets(buffer, sizeof buffer, stdin);
+  getchar();
+}
 
 void criarPersonagem(){
-  struct personagem{
-    char nome[255];
-    int vida;
-    int ataque;
-    int especial;
-    int defesa;
-  };
-  struct personagem jogador;
-  jogador.vida = 100;
-  jogador.especial = 50;
-  printf("Digite o nome do seu personagem:\n");
-  scanf (" %255[^\n]", jogador.nome);
-  printf("Digite a quantidade de dano que o ataque do seu personagem causa: (1-20)\n");
-  scanf(" %d", &jogador.ataque);
-  
-  // Blingadem para o usuário não digitar valores fora do intervalo de 1-50
-  int next = 0;
-  do{
-    if(jogador.ataque >=1 && jogador.ataque <= 50){
-      next = 1;
-    }
-    else{
-      next = 0;
-      printf("Você deve digitar um valor entre 1-50\n");
-      scanf(" %d", &jogador.ataque);
-    }
-  }while(next == 0);
+  if(jogador[0].vida == 100){
+    printf("Você já criou seu personagem. Comece o jogo\n");
+    pause(); 
+  }else{
+    jogador[0].vida = 100;
+    jogador[0].especial = 50;
+    printf("Digite o nome do seu personagem:\n");
+    scanf (" %255[^\n]", jogador[0].nome);
+    printf("Digite a quantidade de dano que o ataque do seu personagem causa: (1-30)\n");
+    scanf(" %d", &jogador[0].ataque);
+    
+    // Blingadem para o usuário não digitar valores fora do intervalo de 1-30
+    int next = 0;
+    do{
+      if(jogador[0].ataque >=1 && jogador[0].ataque <= 30){
+        next = 1;
+      }
+      else{
+        next = 0;
+        printf("Você deve digitar um valor entre 1-30\n");
+        scanf(" %d", &jogador[0].ataque);
+      }
+    }while(next == 0);
 
-  printf("Agora digite o valor de dano que seu escudo consegue absorver: (1-20)\n");
-  scanf(" %d", &jogador.defesa);
+    printf("Agora digite o valor de dano que seu escudo consegue absorver: (1-20)\n");
+    scanf(" %d", &jogador[0].defesa);
 
-  // Blingadem para o usuário não digitar valores fora do intervalo de 1-20 para a defesa
-  next = 0;
-  do{
-    if(jogador.defesa >=1 && jogador.defesa <= 20){
-      next = 1;
-    }
-    else{
-      next = 0;
-      printf("Você deve digitar um valor entre 1-20 para o seu escudo\n");
-      scanf(" %d", &jogador.defesa);
-    }
-  }while(next == 0);
+    // Blingadem para o usuário não digitar valores fora do intervalo de 1-20 para a defesa
+    next = 0;
+    do{
+      if(jogador[0].defesa >=1 && jogador[0].defesa <= 20){
+        next = 1;
+      }
+      else{
+        next = 0;
+        printf("Você deve digitar um valor entre 1-20 para o seu escudo\n");
+        scanf(" %d", &jogador[0].defesa);
+      }
+    }while(next == 0);
 
-  printf("nome: %s\nvida: %d\nataque: %d\nespecial: %d\nescudo: %d\n", jogador.nome, jogador.vida, jogador.ataque, jogador.especial, jogador.defesa);
+    // printf("nome: %s\nvida: %d\nataque: %d\nespecial: %d\nescudo: %d\n", jogador[0].nome, jogador[0].vida, jogador[0].ataque, jogador[0].especial, jogador[0].defesa);
+    printf("Parabéns! Você criou seu personagem\n");
+    pause();
+    void menu();
+    menu();
+  }  
+}
 
+void comecarJogo(){
+  if(jogador[0].vida == 100){
+    printf("Tem jogador\n");
+  }else{
+    printf("Antes de iniciar o jogo você deve criar o seu personagem!\n");
+    pause();
+    void menu();
+    menu();
+  }
 }
 
 void menu(){
@@ -65,7 +95,7 @@ void menu(){
 
   switch(opcao){
     case 1:
-      // comecarJogo();
+      comecarJogo();
       break;
     case 2:
       criarPersonagem();
