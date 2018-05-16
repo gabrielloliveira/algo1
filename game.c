@@ -22,7 +22,9 @@ void pause(){
 void criarPersonagem(){
   if(jogador[0].vida == 100){
     printf("Você já criou seu personagem. Comece o jogo\n");
-    pause(); 
+    pause();
+    void menu();
+    menu(); 
   }else{
     jogador[0].vida = 100;
     jogador[0].especial = 50;
