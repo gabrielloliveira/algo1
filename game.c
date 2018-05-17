@@ -25,8 +25,7 @@ void pause(){
 
 void criaInimigo(){
   // Criando os jogadores inimigos
-  char possiveisNomes[10][255] = {
-    " ",
+  char possiveisNomes[9][255] = {
     "Gatinho Fofo",
     "SPP",
     "Essa barra que é gostar de você",
@@ -39,7 +38,7 @@ void criaInimigo(){
   }; 
 
   if(jogador[1].vida != 100){
-    for(int i = 1; i < 10; ++i){
+    for(int i = 0; i < 9; ++i){
       jogador[i].vida = 100;
       jogador[i].especial = 50;
       jogador[i].ataque = (rand()%29) + 1;
@@ -51,68 +50,61 @@ void criaInimigo(){
 
 // Função que cria o personagem que vai ser controlado pelo usuário
 void criarPersonagem(){
-  if(jogador[0].vida == 100){
-    printf("Você já criou seu personagem. Comece o jogo\n");
-    pause();
-  }else{
-    jogador[0].vida = 100;
-    jogador[0].especial = 50;
-    printf("Digite o nome do seu personagem:\n");
-    scanf (" %255[^\n]", jogador[0].nome);
-    printf("Digite a quantidade de dano que o ataque do seu personagem causa: (1-30)\n");
-    scanf(" %d", &jogador[0].ataque);
-    
-    // Blingadem para o usuário não digitar valores fora do intervalo de 1-30
-    int next = 0;
-    do{
-      if(jogador[0].ataque >=1 && jogador[0].ataque <= 30){
-        next = 1;
-      }
-      else{
-        next = 0;
-        printf("Você deve digitar um valor entre 1-30\n");
-        scanf(" %d", &jogador[0].ataque);
-      }
-    }while(next == 0);
+  for (int i = 0; i < 50; ++i){
+    if(jogador[i].vida != 100){
+      jogador[i].vida = 100;
+      jogador[i].especial = 50;
+      printf("Digite o nome do seu personagem:\n");
+      scanf (" %255[^\n]", jogador[i].nome);
+      printf("Digite a quantidade de dano que o ataque do seu personagem causa: (1-30)\n");
+      scanf(" %d", &jogador[i].ataque);
+      
+      // Blingadem para o usuário não digitar valores fora do intervalo de 1-30
+      int next = 0;
+      do{
+        if(jogador[i].ataque >=1 && jogador[i].ataque <= 30){
+          next = 1;
+        }
+        else{
+          next = 0;
+          printf("Você deve digitar um valor entre 1-30\n");
+          scanf(" %d", &jogador[i].ataque);
+        }
+      }while(next == 0);
 
-    printf("Agora digite o valor de dano que seu escudo consegue absorver: (1-20)\n");
-    scanf(" %d", &jogador[0].defesa);
+      printf("Agora digite o valor de dano que seu escudo consegue absorver: (1-20)\n");
+      scanf(" %d", &jogador[i].defesa);
 
-    // Blingadem para o usuário não digitar valores fora do intervalo de 1-20 para a defesa
-    next = 0;
-    do{
-      if(jogador[0].defesa >=1 && jogador[0].defesa <= 20){
-        next = 1;
-      }
-      else{
-        next = 0;
-        printf("Você deve digitar um valor entre 1-20 para o seu escudo\n");
-        scanf(" %d", &jogador[0].defesa);
-      }
-    }while(next == 0);
+      // Blingadem para o usuário não digitar valores fora do intervalo de 1-20 para a defesa
+      next = 0;
+      do{
+        if(jogador[i].defesa >=1 && jogador[i].defesa <= 20){
+          next = 1;
+        }
+        else{
+          next = 0;
+          printf("Você deve digitar um valor entre 1-20 para o seu escudo\n");
+          scanf(" %d", &jogador[i].defesa);
+        }
+      }while(next == 0);
 
-    // printf("nome: %s\nvida: %d\nataque: %d\nespecial: %d\nescudo: %d\n", jogador[0].nome, jogador[0].vida, jogador[0].ataque, jogador[0].especial, jogador[0].defesa);
-    printf("Parabéns! Você criou seu personagem\n");
-    pause();
+      // printf("nome: %s\nvida: %d\nataque: %d\nespecial: %d\nescudo: %d\n", jogador[0].nome, jogador[0].vida, jogador[0].ataque, jogador[0].especial, jogador[0].defesa);
+      printf("Parabéns! Você criou seu personagem\n");
+      printf("%d\n", i);
+      pause();
+    }
   }  
 }
 
 // Mostra todos personagens criados
 void exibirPersonagens(){
-  if(jogador[0].vida == 100){
-    printf("+-----------Jogadores------------+\n");
-    for (int i = 0; i < 10; ++i){
+  printf("+-----------Jogadores------------+\n");
+  for (int i = 0; i < 50; ++i){
+    if (jogador[i].vida == 100){
       printf("| %d - %s\n", i+1, jogador[i].nome);
     }
-    printf("+--------------------------------+\n");
-  }else{
-    // Mostra somente os jogadores controlados pelo jogo
-    printf("+-----------Jogadores------------+\n");
-    for (int i = 1; i < 10; ++i){
-      printf("| %d - %s\n", i, jogador[i].nome);
-    }
-    printf("+--------------------------------+\n");
   }
+  printf("+--------------------------------+\n");
 }
 
 void editarPersonagens(int numPersonagem){
@@ -184,7 +176,7 @@ void menu(){
   printf("| 5 - Excluir personagem -----------|\n");
   printf("+-----------------------------------+\n");
   printf("Escolha a opção desejada:\n");
-  int opcao;
+  int opcao, numPersonagem;
   scanf("%d", &opcao);
 
   switch(opcao){
@@ -201,12 +193,14 @@ void menu(){
     case 4:
       exibirPersonagens();
       printf("Qual o número do personagem que você deseja editar?\n");
-      int numPersonagem;
       scanf("%d", &numPersonagem);
       editarPersonagens(numPersonagem);
       break;
     case 5:
-      // excluirPersonagem();
+      // exibirPersonagens();
+      // printf("Qual o número do personagem que você quer excluir?\n");
+      // scanf("%d", &numPersonagem);
+      // excluirPersonagem(numPersonagem);
       break;
     default:
       printf("Você deve escolher uma entre as opções mostradas.\n");
