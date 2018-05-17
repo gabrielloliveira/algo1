@@ -48,7 +48,7 @@ void criaInimigo(){
   }
 }
 
-// Função que cria o personagem que vai ser controlado pelo usuário
+// Função que cria o personagem
 void criarPersonagem(){
   for (int i = 0; i < 50; ++i){
     if(jogador[i].vida != 100){
@@ -96,7 +96,7 @@ void criarPersonagem(){
   }  
 }
 
-// Mostra todos personagens criados
+// Mostra todos personagens do jogo
 void exibirPersonagens(){
   printf("+-----------Jogadores------------+\n");
   for (int i = 0; i < 50; ++i){
@@ -106,14 +106,18 @@ void exibirPersonagens(){
   }
   printf("+--------------------------------+\n");
 }
-
+// Edita o personagem escolhido
 void editarPersonagens(int numPersonagem){
-  int next = 0;
-  if(jogador[0].vida == 100){
-    numPersonagem--;
+  int next = 0, ultimo;
+  numPersonagem--;
+  for (int i = 0; i < 50; ++i){
+    if(jogador[i].vida != 100){
+      ultimo = i - 1;
+      break;
+    }
   }
   do{
-    if (numPersonagem >= 0 && numPersonagem <= 9){
+    if (numPersonagem >= 0 && numPersonagem <= ultimo){
       printf("Qual o novo nome do personagem?\n");
       scanf(" %255[^\n]", jogador[numPersonagem].nome);
       printf("Qual o tamanho do dano do seu ataque? 1-30\n");
@@ -149,7 +153,7 @@ void editarPersonagens(int numPersonagem){
       pause();      
 
     }else{
-      printf("Você só pode digitar valores entre 1-10\n");
+      printf("Você só pode digitar valores entre 1-%d\n", ultimo+1);
       scanf("%d", &numPersonagem);
       numPersonagem--;
     }
