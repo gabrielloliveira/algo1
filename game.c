@@ -55,6 +55,7 @@ void criaInimigo(){
 
 // Função que cria o personagem
 void criarPersonagem(){
+  char aux[80];
   // Adiciono o jogador na posição tamanho porque ela guarda a quantidade de
   // jogadores cadastrados (que também é o primeiro índice vazio no vetor)
   jogador[tamanho].vida = 100;
@@ -62,8 +63,17 @@ void criarPersonagem(){
   printf("Digite o nome do seu personagem:\n");
   scanf (" %255[^\n]", jogador[tamanho].nome);
   printf("Digite a quantidade de dano que o ataque do seu personagem causa: (1-30)\n");
-  scanf(" %d", &jogador[tamanho].ataque);
   
+  // Blindagem para não receber caractere ou string
+  scanf(" %80[^\n]", aux);
+  jogador[tamanho].ataque = atoi(aux);
+  if (jogador[tamanho].ataque == 0){
+    do{
+      printf("Você deve digitar um número\n");  
+      scanf(" %80[^\n]", aux);
+      jogador[tamanho].ataque = atoi(aux);
+    }while(jogador[tamanho].ataque == 0);
+  }
   // Blingadem para o usuário não digitar valores fora do intervalo de 1-30
   int next = 0;
   do{
@@ -78,7 +88,17 @@ void criarPersonagem(){
   }while(next == 0);
 
   printf("Agora digite o valor de dano que seu escudo consegue absorver: (1-20)\n");
-  scanf(" %d", &jogador[tamanho].defesa);
+  
+  // Blingagem para não receber caractere ou string
+  scanf(" %80[^\n]", aux);
+  jogador[tamanho].defesa = atoi(aux);
+  if (jogador[tamanho].defesa == 0){
+    do{
+      printf("Você deve digitar um número\n");
+      scanf(" %80[^\n]", aux);
+      jogador[tamanho].defesa = atoi(aux);
+    }while(jogador[tamanho].defesa == 0);
+  }
 
   // Blingadem para o usuário não digitar valores fora do intervalo de 1-20 para a defesa
   next = 0;
@@ -158,6 +178,7 @@ void editarPersonagens(int numPersonagem){
   }while(next == 0);
 }
 
+// Função que retorna o indíce do vetor do personagem 
 int retornaIndiceDoPersonagem(int numDigitado){
   int indice = 1;
   for (int i = 0; i < TAM; ++i){
@@ -172,6 +193,7 @@ int retornaIndiceDoPersonagem(int numDigitado){
   return 0;
 }
 
+// Exclui o personagem
 void excluirPersonagem(int numPersonagem){
   int num = retornaIndiceDoPersonagem(numPersonagem);
   char nomeJogador[255];
@@ -191,15 +213,72 @@ void excluirPersonagem(int numPersonagem){
   pause();
 }
 
+// Começa o jogo
 void comecarJogo(){
+  char aux[80];
+  int numPersonagem;
+  // Verifica se tem personagem criado pelo usuário
   if(jogador[9].vida == 100){
-    printf("Tem jogador\n");
+    printf("%d tamanho\n", tamanho);
+    // Tamanho - 1 é o tamanho do vetor de personagens já criado
+    if(tamanho - 1 > 9){
+      printf("Escolha um personagem para jogar dos quais você criou:\n");
+      printf("+-------Com qual você quer jogar?---------+\n");  
+      int indice = 1;
+      for (int i = 9; i < tamanho; ++i){
+        printf("| %d - %s\n", indice, jogador[i].nome);
+        indice++;
+      }
+      printf("+-----------------------------------------+\n");
+      scanf(" %80[^\n]", aux);
+      numPersonagem = atoi(aux);
+      if (numPersonagem == 0){
+        do{
+          printf("Você deve digitar um número\n");
+          scanf(" %80[^\n]", aux);
+          numPersonagem = atoi(aux);
+        }while(numPersonagem == 0);
+      }else if (numPersonagem >=1 && numPersonagem <= indice){
+        indice = 1;
+        int indiceJogadorNoVetor;
+        for (int i = 9; i < tamanho; ++i){
+          if (indice == numPersonagem){
+            indiceJogadorNoVetor = i;  
+          }
+          indice++;
+        }
+        printf("Jogador escolhido foi: %s\n", jogador[indiceJogadorNoVetor].nome);
+        printf("Aperte enter para começar o jogo...\n");
+        char buffer[80];
+        fgets(buffer, sizeof buffer, stdin);
+        getchar();
+        system("cls || clear");
+      }else{
+        int next = 0;
+        do{
+          printf("Você deve digitar um número entre 1 e %d\n", indice);
+          scanf(" %80[^\n]", aux);
+          numPersonagem = atoi(aux);
+          if (numPersonagem >=1 && numPersonagem <= indice){
+            next = 1;
+          }
+        }while(next == 0);
+      }
+    }else{
+      printf("Você vai começar com %s\n", jogador[9].nome);
+      printf("Aperte enter para começar o jogo...\n");
+      char buffer[80];
+      fgets(buffer, sizeof buffer, stdin);
+      getchar();
+      system("cls || clear");
+    }
   }else{
     printf("Antes de iniciar o jogo você deve criar o seu personagem!\n");
     pause();
   }
 }
 
+// Mostra o menu e vê qual opção o usuário escolheu
 void menu(){
   printf("\n");
   printf("+-----------------------------------+\n");
