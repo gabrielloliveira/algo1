@@ -4,8 +4,6 @@
 #include <time.h>
 #define TAM 50
 
-
-// Pesquisar sobre atoi e atof
 // Declarando a estrutura para o tipo personagem de forma global
 struct personagem{
   char nome[255];
@@ -119,17 +117,24 @@ void criarPersonagem(){
 }
 
 // Mostra todos personagens do jogo
-void exibirPersonagens(){
-  printf("+-----------Jogadores------------+\n");
-  int indice = 1;
-  for (int i = 0; i < tamanho; ++i){
-    if (jogador[i].vida == 100){
-      printf("| %d - %s\n", indice, jogador[i].nome);
-      indice++;
+int exibirPersonagens(){
+  if (tamanho > 0){
+    printf("+-----------Jogadores------------+\n");
+    int indice = 1;
+    for (int i = 0; i < tamanho; ++i){
+      if (jogador[i].vida == 100){
+        printf("| %d - %s\n", indice, jogador[i].nome);
+        indice++;
+      }
     }
+    printf("+--------------------------------+\n");
+    return 1;
+  }else{
+    printf("Não possui nenhum jogador no game.\n");
+    return 0;
   }
-  printf("+--------------------------------+\n");
 }
+
 // Edita o personagem escolhido
 void editarPersonagens(int numPersonagem){
   int next = 0;
@@ -193,6 +198,22 @@ int retornaIndiceDoPersonagem(int numDigitado){
   return 0;
 }
 
+// Variação da função de excluir inimigo, sem chamada para função menu e sem mensagem imprimindo na tela
+void mataInimigo(int numPersonagem){
+  int num = retornaIndiceDoPersonagem(numPersonagem);
+  char nomeJogador[255];
+  strcpy(nomeJogador, jogador[num].nome);
+  for (int i = numPersonagem; i < TAM; ++i){
+    strcpy(jogador[i-1].nome, jogador[i].nome);
+    jogador[i-1].ataque = jogador[i].ataque;
+    jogador[i-1].defesa = jogador[i].defesa;
+    if(i == TAM - 1){
+      jogador[i].vida == -1;
+    }
+  }
+  tamanho--;
+}
+
 // Exclui o personagem
 void excluirPersonagem(int numPersonagem){
   int num = retornaIndiceDoPersonagem(numPersonagem);
@@ -207,10 +228,86 @@ void excluirPersonagem(int numPersonagem){
     }
   }
   tamanho--;
-  // strcpy(jogador[num].nome, "excluido");
-  // jogador[num].vida = -1;
   printf("Jogador %s excluído com sucesso!\n", nomeJogador);
   pause();
+}
+
+void executaPartida(int indiceJogador){
+  printf("Bem-vindo(a) %s, o jogo funciona dessa maneira:\n", jogador[indiceJogador].nome);
+  printf("Aparecerá os inimigos aleatoriamente. Você tem direito a 1 ataque por vez.\n");
+  printf("Após 3 ataques você tem a opção de lançar um poder especial com dano de 50.\n");
+  printf("Sua vida é de 100. Cada inimigo que você mata, ganha +1 no escore total.\n");
+  printf("Saiba que a sua vida não regenera.\n");
+  printf("Boa Sorte!\n\n");
+  int inimigo;
+  char aux[80];
+  do{
+    int escore = 0;
+    // tamanho -2 é o indicedo último inimigo
+    inimigo = rand()%(tamanho-2);
+    printf("%d inimigo\n", inimigo);
+    printf("Você vai lutar com: %s\n", jogador[inimigo].nome);
+    printf("Vida: %d\n", jogador[inimigo].vida);
+    printf("Ataque: %d\n", jogador[inimigo].ataque);
+    printf("Escudo: %d\n", jogador[inimigo].defesa);
+    printf("Especial: %d\n", jogador[inimigo].especial);
+    do{
+      int cEspecial = 0;
+      // if (){
+        
+      // }
+      printf("Digite 1 para atacar:\n");
+      scanf(" %80[^\n]", aux);
+      do{
+        if(atoi(aux) != 1){
+          do{
+            printf("Você deve digitar o número 1\n");  
+            scanf(" %80[^\n]", aux);
+          }while(atoi(aux) != 1); 
+        }
+      }while(atoi(aux) != 1);
+
+      int dano = jogador[indiceJogador].ataque - jogador[inimigo].defesa;
+      if (dano < 0){
+        dano *= -1;
+      }
+      jogador[inimigo].vida -= dano;
+      cEspecial++;
+      if(jogador[inimigo].vida <= 0){
+        jogador[inimigo].vida = 0;
+        printf("------------------------------\n");
+        printf("Vida do inimigo: %d\n", jogador[inimigo].vida);
+        printf("Parabéns! Você venceu essa luta.\n");
+        printf("------------------------------\n");
+        escore++;
+        break;
+      }else{
+        printf("------------------------------\n");
+        printf("Vida do inimigo: %d\n", jogador[inimigo].vida);
+        printf("Vez do inimigo.\n");
+        printf("------------------------------\n");
+      }
+      int danoInimigo = jogador[inimigo].ataque - jogador[indiceJogador].defesa;
+      if (danoInimigo < 0){
+        danoInimigo *= -1;
+      }
+      jogador[indiceJogador].vida -= danoInimigo;
+      if(jogador[indiceJogador].vida <= 0){
+        jogador[indiceJogador].vida = 0;
+        printf("------------------------------\n");
+        printf("Sua vida: %d\n", jogador[indiceJogador].vida);
+        printf("Que pena! Você perdeu. Game Over.\n");
+        printf("Seu escore: %d\n", escore);
+        pause();
+        printf("------------------------------\n");
+      }else{
+        printf("------------------------------\n");
+        printf("Sua vida: %d\n", jogador[indiceJogador].vida);
+      }
+    }while(jogador[inimigo].vida > 0);
+    mataInimigo(inimigo+1);
+    printf("Seu escore: %d\n", escore);
+  }while(jogador[indiceJogador].vida > 0);
 }
 
 // Começa o jogo
@@ -219,7 +316,6 @@ void comecarJogo(){
   int numPersonagem;
   // Verifica se tem personagem criado pelo usuário
   if(jogador[9].vida == 100){
-    printf("%d tamanho\n", tamanho);
     // Tamanho - 1 é o tamanho do vetor de personagens já criado
     if(tamanho - 1 > 9){
       printf("Escolha um personagem para jogar dos quais você criou:\n");
@@ -253,6 +349,7 @@ void comecarJogo(){
         fgets(buffer, sizeof buffer, stdin);
         getchar();
         system("cls || clear");
+        executaPartida(indiceJogadorNoVetor);
       }else{
         int next = 0;
         do{
@@ -271,6 +368,7 @@ void comecarJogo(){
       fgets(buffer, sizeof buffer, stdin);
       getchar();
       system("cls || clear");
+      executaPartida(9);
     }
   }else{
     printf("Antes de iniciar o jogo você deve criar o seu personagem!\n");
@@ -288,9 +386,10 @@ void menu(){
   printf("| 3 - Exibir personagens -----------|\n");
   printf("| 4 - Editar personagens -----------|\n");
   printf("| 5 - Excluir personagem -----------|\n");
+  printf("| 6 - Sair do game -----------------|\n");
   printf("+-----------------------------------+\n");
   printf("Escolha a opção desejada:\n");
-  int opcao, numPersonagem;
+  int opcao, numPersonagem, temPersonagem;
   char aux[80];
   scanf(" %80[^\n]", aux);
   opcao = atoi(aux);
@@ -309,36 +408,47 @@ void menu(){
       criarPersonagem();
       break;
     case 3:
-      exibirPersonagens();
+      temPersonagem = exibirPersonagens();
       pause();
       break;
     case 4:
-      exibirPersonagens();
-      printf("Qual o número do personagem que você deseja editar?\n");
-      scanf(" %80[^\n]", aux);
-      numPersonagem = atoi(aux);
-      if (numPersonagem == 0){
-        do{
-          printf("Você deve digitar somente um número\n");
-          scanf(" %80[^\n]", aux);
-          numPersonagem = atoi(aux);
-        }while(numPersonagem == 0);
+      temPersonagem = exibirPersonagens();
+      if (temPersonagem == 1){
+        printf("Qual o número do personagem que você deseja editar?\n");
+        scanf(" %80[^\n]", aux);
+        numPersonagem = atoi(aux);
+        if (numPersonagem == 0){
+          do{
+            printf("Você deve digitar somente um número\n");
+            scanf(" %80[^\n]", aux);
+            numPersonagem = atoi(aux);
+          }while(numPersonagem == 0);
+        }
+        editarPersonagens(numPersonagem);
+      }else{
+        pause();
       }
-      editarPersonagens(numPersonagem);
       break;
     case 5:
-      exibirPersonagens();
-      printf("Qual o número do personagem que você quer excluir?\n");
-      scanf(" %80[^\n]", aux);
-      numPersonagem = atoi(aux);
-      if (numPersonagem == 0){
-        do{
-          printf("Você deve digitar somente um número\n");
-          scanf(" %80[^\n]", aux);
-          numPersonagem = atoi(aux);
-        }while(numPersonagem == 0);
+      temPersonagem = exibirPersonagens();
+      if (temPersonagem == 1){
+        printf("Qual o número do personagem que você quer excluir?\n");
+        scanf(" %80[^\n]", aux);
+        numPersonagem = atoi(aux);
+        if (numPersonagem == 0){
+          do{
+            printf("Você deve digitar somente um número\n");
+            scanf(" %80[^\n]", aux);
+            numPersonagem = atoi(aux);
+          }while(numPersonagem == 0);
+        }
+        excluirPersonagem(numPersonagem);
+      }else{
+        pause();
       }
-      excluirPersonagem(numPersonagem);
+      break;
+    case 6:
+      exit(1);
       break;
     default:
       printf("Você deve escolher uma entre as opções mostradas.\n");
