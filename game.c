@@ -45,7 +45,7 @@ void criaInimigo(){
       jogador[i].vida = 100;
       jogador[i].especial = 50;
       jogador[i].ataque = (rand()%29) + 1;
-      jogador[i].defesa = (rand()%19) + 1;
+      jogador[i].defesa = (rand()%4) + 1;
       strcpy(jogador[i].nome, possiveisNomes[i]);
     }
   }
@@ -85,7 +85,7 @@ void criarPersonagem(){
     }
   }while(next == 0);
 
-  printf("Agora digite o valor de dano que seu escudo consegue absorver: (1-20)\n");
+  printf("Agora digite o valor de dano que seu escudo consegue absorver: (1-5)\n");
   
   // Blingagem para não receber caractere ou string
   scanf(" %80[^\n]", aux);
@@ -98,15 +98,15 @@ void criarPersonagem(){
     }while(jogador[tamanho].defesa == 0);
   }
 
-  // Blingadem para o usuário não digitar valores fora do intervalo de 1-20 para a defesa
+  // Blingadem para o usuário não digitar valores fora do intervalo de 1-5 para a defesa
   next = 0;
   do{
-    if(jogador[tamanho].defesa >=1 && jogador[tamanho].defesa <= 20){
+    if(jogador[tamanho].defesa >=1 && jogador[tamanho].defesa <= 5){
       next = 1;
     }
     else{
       next = 0;
-      printf("Você deve digitar um valor entre 1-20 para o seu escudo\n");
+      printf("Você deve digitar um valor entre 1-5 para o seu escudo\n");
       scanf(" %d", &jogador[tamanho].defesa);
     }
   }while(next == 0);
@@ -157,16 +157,16 @@ void editarPersonagens(int numPersonagem){
         }
       }while(next == 0);
 
-      printf("Agora digite o valor de dano que o escudo vai absorver: 1-20\n");
+      printf("Agora digite o valor de dano que o escudo vai absorver: 1-5\n");
       scanf(" %d", &jogador[numPersonagem].defesa);
 
       do{
-        if(jogador[numPersonagem].defesa >=1 && jogador[numPersonagem].defesa <= 20){
+        if(jogador[numPersonagem].defesa >=1 && jogador[numPersonagem].defesa <= 5){
           next = 1;
         }
         else{
           next = 0;
-          printf("Você deve digitar um valor entre 1-20 para o escudo\n");
+          printf("Você deve digitar um valor entre 1-5 para o escudo\n");
           scanf(" %d", &jogador[numPersonagem].defesa);
         }
       }while(next == 0);
@@ -235,46 +235,63 @@ void excluirPersonagem(int numPersonagem){
 void executaPartida(int indiceJogador){
   printf("Bem-vindo(a) %s, o jogo funciona dessa maneira:\n", jogador[indiceJogador].nome);
   printf("Aparecerá os inimigos aleatoriamente. Você tem direito a 1 ataque por vez.\n");
-  printf("Após 3 ataques você tem a opção de lançar um poder especial com dano de 50.\n");
+  printf("Após 3 ataques você irá lançar um poder especial com dano de 50.\n");
   printf("Sua vida é de 100. Cada inimigo que você mata, ganha +1 no escore total.\n");
   printf("Saiba que a sua vida não regenera.\n");
   printf("Boa Sorte!\n\n");
   int inimigo;
   char aux[80];
+  int escore = 0;
   do{
-    int escore = 0;
     // tamanho -2 é o indicedo último inimigo
     inimigo = rand()%(tamanho-2);
-    printf("%d inimigo\n", inimigo);
     printf("Você vai lutar com: %s\n", jogador[inimigo].nome);
     printf("Vida: %d\n", jogador[inimigo].vida);
     printf("Ataque: %d\n", jogador[inimigo].ataque);
     printf("Escudo: %d\n", jogador[inimigo].defesa);
-    printf("Especial: %d\n", jogador[inimigo].especial);
+    int cEspecial = 0, dano;
     do{
-      int cEspecial = 0;
-      // if (){
+      if(cEspecial >= 3){
+        printf("+++++++++++Especial carregado:++++++++++++++\n");
+        printf("Aperte 1 para soltá-lo\n");
+        scanf(" %80[^\n]", aux);
+        do{
+          if(atoi(aux) != 1){
+            do{
+              printf("Você deve digitar o número 1\n");  
+              scanf(" %80[^\n]", aux);
+            }while(atoi(aux) != 1); 
+          }
+        }while(atoi(aux) != 1);
+        dano = jogador[indiceJogador].especial - jogador[inimigo].defesa;
+        cEspecial = 0;
+      }else{
+        printf("Digite 1 para atacar:\n");
+        scanf(" %80[^\n]", aux);
+        do{
+          if(atoi(aux) != 1){
+            do{
+              printf("Você deve digitar o número 1\n");  
+              scanf(" %80[^\n]", aux);
+            }while(atoi(aux) != 1); 
+          }
+        }while(atoi(aux) != 1);
         
-      // }
-      printf("Digite 1 para atacar:\n");
-      scanf(" %80[^\n]", aux);
-      do{
-        if(atoi(aux) != 1){
-          do{
-            printf("Você deve digitar o número 1\n");  
-            scanf(" %80[^\n]", aux);
-          }while(atoi(aux) != 1); 
+        if (jogador[indiceJogador].ataque <= jogador[inimigo].defesa){
+          dano = 0;
+        }else{
+          dano = jogador[indiceJogador].ataque - jogador[inimigo].defesa;
         }
-      }while(atoi(aux) != 1);
+        cEspecial++;
+      }
 
-      int dano = jogador[indiceJogador].ataque - jogador[inimigo].defesa;
       if (dano < 0){
         dano *= -1;
       }
       jogador[inimigo].vida -= dano;
-      cEspecial++;
       if(jogador[inimigo].vida <= 0){
         jogador[inimigo].vida = 0;
+        printf("\n");
         printf("------------------------------\n");
         printf("Vida do inimigo: %d\n", jogador[inimigo].vida);
         printf("Parabéns! Você venceu essa luta.\n");
@@ -282,31 +299,51 @@ void executaPartida(int indiceJogador){
         escore++;
         break;
       }else{
+        printf("\n");
         printf("------------------------------\n");
         printf("Vida do inimigo: %d\n", jogador[inimigo].vida);
         printf("Vez do inimigo.\n");
         printf("------------------------------\n");
       }
-      int danoInimigo = jogador[inimigo].ataque - jogador[indiceJogador].defesa;
+      int danoInimigo;
+      
+      if (jogador[inimigo].ataque <= jogador[indiceJogador].defesa){
+        danoInimigo = 0;
+      }else{
+        danoInimigo = jogador[inimigo].ataque - jogador[indiceJogador].defesa;
+      }
+      
       if (danoInimigo < 0){
         danoInimigo *= -1;
       }
+
       jogador[indiceJogador].vida -= danoInimigo;
       if(jogador[indiceJogador].vida <= 0){
         jogador[indiceJogador].vida = 0;
+        printf("\n");
         printf("------------------------------\n");
         printf("Sua vida: %d\n", jogador[indiceJogador].vida);
         printf("Que pena! Você perdeu. Game Over.\n");
         printf("Seu escore: %d\n", escore);
-        pause();
         printf("------------------------------\n");
+        pause();
       }else{
+        printf("\n");
         printf("------------------------------\n");
         printf("Sua vida: %d\n", jogador[indiceJogador].vida);
       }
     }while(jogador[inimigo].vida > 0);
+
+    // IndiceJOgador--; pois quando exclui um personagem, ele desce no vetor    
     mataInimigo(inimigo+1);
+    indiceJogador--;
     printf("Seu escore: %d\n", escore);
+    printf("Aperte enter para continuar...\n");
+    char buffer[80];
+    fgets(buffer, sizeof buffer, stdin);
+    getchar();
+    system("cls || clear");
+  
   }while(jogador[indiceJogador].vida > 0);
 }
 
