@@ -20,7 +20,7 @@
 - Após 3 ataques, o jogador do usuário tem a opção de jogar o seu especial (dano 50)
 - A partida acaba quando o usuário morre, ou seja, tem a vida de seu personagem igual a 0.
 
-## Das limitações
+## Das limitações:
 - O jogo não possui integração com banco de dados, ou seja, toda vez que o jogo é reiniciado as configurações voltam ao padrão.
 - Não foi implementada nenhum tipo de interface gráfica ou animação.
 - O jogo não possui classes para os personagens, nem aumento de nível do jogador.
