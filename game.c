@@ -12,6 +12,7 @@ struct personagem{
   int especial;
   int defesa;
   int maxEscore;
+  int criadoPorUsuario;
 };
 struct personagem jogador[TAM];
 int tamanho = 9;
@@ -48,6 +49,7 @@ void criaInimigo(){
       jogador[i].ataque = (rand()%29) + 1;
       jogador[i].defesa = (rand()%4) + 1;
       jogador[i].maxEscore = 0;
+      jogador[i].criadoPorUsuario = 0;
       strcpy(jogador[i].nome, possiveisNomes[i]);
     }
   }
@@ -114,10 +116,25 @@ void criarPersonagem(){
   }while(next == 0);
 
   jogador[tamanho].maxEscore = 0;
+  jogador[tamanho].criadoPorUsuario = 1;
 
   printf("Parabéns! Você criou seu personagem\n");
   tamanho++;
   pause();  
+}
+
+int qtdDePersonagensCriadosPeloUsuario(){
+  if (tamanho > 0){
+    int indice = 1, qtd = 0;
+    for (int i = 0; i < tamanho; ++i){
+      if (jogador[i].criadoPorUsuario == 1){
+        qtd++;
+      }
+    }
+    return qtd;
+  }else{
+    return 0;
+  }
 }
 
 // Mostra todos personagens do jogo
@@ -218,6 +235,7 @@ void mataInimigo(int numPersonagem){
     jogador[i-1].ataque = jogador[i].ataque;
     jogador[i-1].defesa = jogador[i].defesa;
     jogador[i-1].vida = jogador[i].vida;
+    jogador[i-1].criadoPorUsuario = jogador[i].criadoPorUsuario;
   }
   tamanho--;
 }
@@ -354,9 +372,6 @@ void executaPartida(int indiceJogador){
     mataInimigo(inimigo+1);
     indiceJogador--;
     sorteiaInimigos--;
-    printf("você está jogando com: %s\n", jogador[indiceJogador].nome);
-    printf("a vida dele é: %d\n", jogador[indiceJogador].vida);
-    printf("O ID é: %d\n", indiceJogador);
     printf("Seu escore: %d\n", escore);
     printf("Aperte enter para continuar...\n");
     char buffer[80];
@@ -371,15 +386,21 @@ void executaPartida(int indiceJogador){
 void comecarJogo(){
   char aux[80];
   int numPersonagem;
+  int qtd = qtdDePersonagensCriadosPeloUsuario();
   // Verifica se tem personagem criado pelo usuário
-  if(jogador[9].vida == 100){
+  // tamanho guarda o numero de elementos do vetor
+  // ex.: se tiver 12 elementos, sendo 2 criados pelo usuário
+  // 12 - 2 = 10 (primeiro personagem criado pelo usuário)
+  if(jogador[tamanho - qtd].vida == 100){
     // Tamanho - 1 é o tamanho do vetor de personagens já criado
-    if(tamanho - 1 > 9){
+    if(qtd > 1){
       printf("Escolha um personagem para jogar dos quais você criou:\n");
       printf("+-------Com qual você quer jogar?---------+\n");  
       int indice = 1;
-      for (int i = 9; i < tamanho; ++i){
+      int count = 0;
+      for (int i = tamanho - qtd; count < qtd; ++i){
         printf("| %d - %s\n", indice, jogador[i].nome);
+        count++;
         indice++;
       }
       printf("+-----------------------------------------+\n");
@@ -394,7 +415,7 @@ void comecarJogo(){
       }else if (numPersonagem >=1 && numPersonagem <= indice){
         indice = 1;
         int indiceJogadorNoVetor;
-        for (int i = 9; i < tamanho; ++i){
+        for (int i = tamanho - qtd; i < tamanho; ++i){
           if (indice == numPersonagem){
             indiceJogadorNoVetor = i;  
           }
@@ -419,7 +440,7 @@ void comecarJogo(){
         }while(next == 0);
       }
     }else{
-      printf("Você vai começar com %s\n", jogador[9].nome);
+      printf("Você vai começar com %s\n", jogador[tamanho - qtd].nome);
       printf("Aperte enter para começar o jogo...\n");
       char buffer[80];
       fgets(buffer, sizeof buffer, stdin);
