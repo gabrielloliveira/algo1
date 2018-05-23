@@ -11,6 +11,7 @@ struct personagem{
   int ataque;
   int especial;
   int defesa;
+  int maxEscore;
 };
 struct personagem jogador[TAM];
 int tamanho = 9;
@@ -46,6 +47,7 @@ void criaInimigo(){
       jogador[i].especial = 50;
       jogador[i].ataque = (rand()%29) + 1;
       jogador[i].defesa = (rand()%4) + 1;
+      jogador[i].maxEscore = 0;
       strcpy(jogador[i].nome, possiveisNomes[i]);
     }
   }
@@ -111,6 +113,8 @@ void criarPersonagem(){
     }
   }while(next == 0);
 
+  jogador[tamanho].maxEscore = 0;
+
   printf("Parabéns! Você criou seu personagem\n");
   tamanho++;
   pause();  
@@ -119,15 +123,16 @@ void criarPersonagem(){
 // Mostra todos personagens do jogo
 int exibirPersonagens(){
   if (tamanho > 0){
-    printf("+-----------Jogadores------------+\n");
+    printf("+---------------------------Jogadores--------------------------+\n");
+    printf("|-MÁX.ESCORES-|-ID-JOGADOR-------------------------------------|\n");
     int indice = 1;
     for (int i = 0; i < tamanho; ++i){
       if (jogador[i].vida == 100){
-        printf("| %d - %s\n", indice, jogador[i].nome);
+        printf("|      %d      | %d - %s\n", jogador[i].maxEscore, indice, jogador[i].nome);
         indice++;
       }
     }
-    printf("+--------------------------------+\n");
+    printf("+--------------------------------------------------------------+\n");
     return 1;
   }else{
     printf("Não possui nenhum jogador no game.\n");
@@ -139,6 +144,13 @@ int exibirPersonagens(){
 void editarPersonagens(int numPersonagem){
   int next = 0;
   numPersonagem--;
+  printf("--------------------------\n");
+  printf("Nome: %s\n", jogador[numPersonagem].nome);
+  printf("Vida: %d\n", jogador[numPersonagem].vida);  
+  printf("Ataque: %d\n", jogador[numPersonagem].ataque);
+  printf("Escudo: %d\n", jogador[numPersonagem].defesa);
+  printf("Especial: %d\n", jogador[numPersonagem].especial);
+  printf("--------------------------\n");
   do{
     if (numPersonagem >= 0 && numPersonagem < tamanho){
       printf("Qual o novo nome do personagem?\n");
@@ -201,15 +213,11 @@ int retornaIndiceDoPersonagem(int numDigitado){
 // Variação da função de excluir inimigo, sem chamada para função menu e sem mensagem imprimindo na tela
 void mataInimigo(int numPersonagem){
   int num = retornaIndiceDoPersonagem(numPersonagem);
-  char nomeJogador[255];
-  strcpy(nomeJogador, jogador[num].nome);
   for (int i = numPersonagem; i < TAM; ++i){
     strcpy(jogador[i-1].nome, jogador[i].nome);
     jogador[i-1].ataque = jogador[i].ataque;
     jogador[i-1].defesa = jogador[i].defesa;
-    if(i == TAM - 1){
-      jogador[i].vida == -1;
-    }
+    jogador[i-1].vida = jogador[i].vida;
   }
   tamanho--;
 }
@@ -242,13 +250,15 @@ void executaPartida(int indiceJogador){
   int inimigo;
   char aux[80];
   int escore = 0;
+  int sorteiaInimigos = 9;
   do{
-    // tamanho -2 é o indicedo último inimigo
-    inimigo = rand()%(tamanho-2);
+    inimigo = rand()%sorteiaInimigos;
+    printf("Sua vida :%d\n\n\n", jogador[indiceJogador].vida);
     printf("Você vai lutar com: %s\n", jogador[inimigo].nome);
     printf("Vida: %d\n", jogador[inimigo].vida);
     printf("Ataque: %d\n", jogador[inimigo].ataque);
     printf("Escudo: %d\n", jogador[inimigo].defesa);
+
     int cEspecial = 0, dano;
     do{
       if(cEspecial >= 3){
@@ -325,6 +335,12 @@ void executaPartida(int indiceJogador){
         printf("Sua vida: %d\n", jogador[indiceJogador].vida);
         printf("Que pena! Você perdeu. Game Over.\n");
         printf("Seu escore: %d\n", escore);
+        printf("Quantidade de inimigos derrotados: %d\n", escore);
+        if (escore > jogador[indiceJogador].maxEscore){
+          jogador[indiceJogador].maxEscore = escore;
+        }
+        // Restaurando vida para futuras partidas
+        jogador[indiceJogador].vida = 100;
         printf("------------------------------\n");
         pause();
       }else{
@@ -334,9 +350,13 @@ void executaPartida(int indiceJogador){
       }
     }while(jogador[inimigo].vida > 0);
 
-    // IndiceJOgador--; pois quando exclui um personagem, ele desce no vetor    
+    // IndiceJogador--; pois quando exclui um personagem, ele desce no vetor    
     mataInimigo(inimigo+1);
     indiceJogador--;
+    sorteiaInimigos--;
+    printf("você está jogando com: %s\n", jogador[indiceJogador].nome);
+    printf("a vida dele é: %d\n", jogador[indiceJogador].vida);
+    printf("O ID é: %d\n", indiceJogador);
     printf("Seu escore: %d\n", escore);
     printf("Aperte enter para continuar...\n");
     char buffer[80];
